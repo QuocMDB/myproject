@@ -1,0 +1,312 @@
+{
+  "categories": [
+    {
+      "id": "1",
+      "name": "Technology"
+    },
+    {
+      "id": "2",
+      "name": "Business"
+    },
+    {
+      "id": "3",
+      "name": "Education"
+    },
+    {
+      "id": "4",
+      "name": "Entertainment"
+    },
+    {
+      "id": "5",
+      "name": "Sports"
+    },
+    {
+      "id": "6",
+      "name": "Health"
+    },
+    {
+      "id": "7",
+      "name": "Internal"
+    },
+    {
+      "id": "8",
+      "name": "Marketing"
+    },
+    {
+      "id": "9",
+      "name": "Training"
+    }
+  ],
+  "events": [
+    {
+      "id": "1",
+      "title": "Tech Conference 2024",
+      "description": "Hội thảo công nghệ lớn nhất năm với các chuyên gia hàng đầu",
+      "categories": [
+        "Technology",
+        "Education",
+        "Business"
+      ],
+      "categoryIds": [
+        1,
+        3,
+        2
+      ],
+      "active": true,
+      "startDate": "2024-08-15T09:00:00Z",
+      "endDate": "2024-08-15T17:00:00Z",
+      "location": {
+        "venue": "Trung tâm Hội nghị Quốc gia",
+        "address": "123 Đường ABC, Quận 1, TP.HCM",
+        "phone": "028-1234-5678",
+        "email": "contact@conference.vn"
+      },
+      "organizer": "Tech Events Vietnam",
+      "estimatedAttendees": 500,
+      "actualAttendees": 485,
+      "budget": 50000000,
+      "status": "cancelled",
+      "cancelledAt": "2025-07-12T03:45:13.367Z"
+    },
+    {
+      "id": "2",
+      "title": "Team Building Q3",
+      "description": "Hoạt động team building cho toàn bộ nhân viên",
+      "categories": [
+        "Internal",
+        "Entertainment",
+        "Training"
+      ],
+      "categoryIds": [
+        7,
+        4,
+        9
+      ],
+      "active": true,
+      "startDate": "2024-08-20T08:00:00Z",
+      "endDate": "2024-08-20T18:00:00Z",
+      "location": {
+        "venue": "Resort Vũng Tàu",
+        "address": "Bãi Trước, Vũng Tàu",
+        "phone": "0254-123-456",
+        "email": "booking@vungtauresort.com"
+      },
+      "organizer": "HR Department",
+      "estimatedAttendees": 150,
+      "actualAttendees": null,
+      "budget": 30000000,
+      "status": "cancelled",
+      "lastStatusUpdate": "2025-07-12T03:26:01.291Z",
+      "cancelledAt": "2025-07-12T12:27:45.730Z"
+    },
+    {
+      "id": "3",
+      "title": "Product Launch Event",
+      "description": "Ra mắt sản phẩm mới với khách hàng và đối tác",
+      "categories": [
+        "Marketing",
+        "Business",
+        "Entertainment"
+      ],
+      "categoryIds": [
+        8,
+        2,
+        4
+      ],
+      "active": true,
+      "startDate": "2024-09-10T19:00:00Z",
+      "endDate": "2024-09-10T22:00:00Z",
+      "location": {
+        "venue": "Khách sạn Rex",
+        "address": "141 Nguyễn Huệ, Quận 1, TP.HCM",
+        "phone": "028-3829-2185",
+        "email": "events@rexhotel.com.vn"
+      },
+      "organizer": "Marketing Team",
+      "estimatedAttendees": 200,
+      "actualAttendees": null,
+      "budget": 25000000,
+      "status": "completed",
+      "lastStatusUpdate": "2025-07-12T03:26:01.291Z"
+    },
+    {
+      "id": "4",
+      "title": "Annual Sports Day 2024",
+      "description": "Ngày hội thể thao thường niên dành cho nhân viên và gia đình",
+      "categories": [
+        "Sports",
+        "Internal",
+        "Entertainment",
+        "Health"
+      ],
+      "categoryIds": [
+        5,
+        7,
+        4,
+        6
+      ],
+      "active": true,
+      "startDate": "2024-09-25T07:00:00Z",
+      "endDate": "2024-09-25T17:00:00Z",
+      "location": {
+        "venue": "Sân vận động Thống Nhất",
+        "address": "138 Đào Duy Từ, Quận 10, TP.HCM",
+        "phone": "028-3862-4397",
+        "email": "booking@thongnhatstadium.vn"
+      },
+      "organizer": "Sports Club",
+      "estimatedAttendees": 300,
+      "actualAttendees": null,
+      "budget": 15000000,
+      "status": "completed",
+      "lastStatusUpdate": "2025-07-12T03:26:01.291Z"
+    },
+    {
+      "id": "5",
+      "title": "Health & Wellness Workshop",
+      "description": "Hội thảo sức khỏe và chăm sóc tinh thần cho nhân viên",
+      "categories": [
+        "Health",
+        "Education",
+        "Training",
+        "Internal"
+      ],
+      "categoryIds": [
+        6,
+        3,
+        9,
+        7
+      ],
+      "active": true,
+      "startDate": "2024-10-05T14:00:00Z",
+      "endDate": "2024-10-05T17:00:00Z",
+      "location": {
+        "venue": "Yoga Studio Serenity",
+        "address": "45 Thảo Điền, Quận 2, TP.HCM",
+        "phone": "028-3744-5566",
+        "email": "booking@serenityyoga.vn"
+      },
+      "organizer": "Wellness Committee",
+      "estimatedAttendees": 80,
+      "actualAttendees": null,
+      "budget": 8000000,
+      "status": "cancelled"
+    },
+    {
+      "id": "6",
+      "title": "Customer Appreciation Dinner",
+      "description": "Tiệc tri ân khách hàng VIP cuối năm",
+      "categories": [
+        "Business",
+        "Marketing",
+        "Entertainment"
+      ],
+      "categoryIds": [
+        2,
+        8,
+        4
+      ],
+      "active": true,
+      "startDate": "2024-11-20T18:30:00Z",
+      "endDate": "2024-11-20T22:00:00Z",
+      "location": {
+        "venue": "InterContinental Saigon",
+        "address": "Corner of Hai Ba Trung & Le Duan, Quận 1, TP.HCM",
+        "phone": "028-3520-9999",
+        "email": "events@intercontinental.com"
+      },
+      "organizer": "Sales Department",
+      "estimatedAttendees": 120,
+      "actualAttendees": null,
+      "budget": 45000000,
+      "status": "cancelled",
+      "lastStatusUpdate": "2025-07-12T03:26:01.291Z",
+      "cancelledAt": "2025-07-12T12:33:12.165Z"
+    },
+    {
+      "id": "7",
+      "title": "done",
+      "description": "done",
+      "categories": [
+        "Technology",
+        "Business"
+      ],
+      "categoryIds": [
+        1,
+        2
+      ],
+      "active": true,
+      "startDate": "2025-07-11T02:48:00.000Z",
+      "endDate": "2025-07-11T02:51:00.000Z",
+      "location": {
+        "venue": null,
+        "address": null,
+        "phone": null,
+        "email": null
+      },
+      "organizer": "a",
+      "estimatedAttendees": 12,
+      "actualAttendees": null,
+      "budget": 12,
+      "status": "completed",
+      "lastStatusUpdate": "2025-07-12T03:26:01.291Z"
+    },
+    {
+      "id": "8",
+      "title": "svd",
+      "description": "svd",
+      "categories": [
+        "Entertainment",
+        "Business"
+      ],
+      "categoryIds": [
+        4,
+        2
+      ],
+      "active": true,
+      "startDate": "2025-07-12T13:00:00.000Z",
+      "endDate": "2025-07-12T14:49:00.000Z",
+      "location": {
+        "venue": "svd",
+        "address": "svd",
+        "phone": "0123456789",
+        "email": "quoc@gmail.com"
+      },
+      "organizer": "quoc",
+      "estimatedAttendees": 200000,
+      "actualAttendees": 500000,
+      "budget": 1000000000,
+      "status": "cancelled",
+      "lastStatusUpdate": "2025-07-12T12:18:55.284Z",
+      "cancelledAt": "2025-07-12T12:26:25.647Z"
+    },
+    {
+      "id": "9",
+      "title": "k",
+      "description": "k",
+      "categories": [
+        "Sports",
+        "Health"
+      ],
+      "categoryIds": [
+        5,
+        6
+      ],
+      "active": true,
+      "startDate": "2025-07-12T11:05:00.000Z",
+      "endDate": "2025-07-12T13:05:00.000Z",
+      "location": {
+        "venue": null,
+        "address": null,
+        "phone": null,
+        "email": null
+      },
+      "organizer": "k",
+      "estimatedAttendees": 1,
+      "actualAttendees": null,
+      "budget": 1,
+      "status": "completed",
+      "lastStatusUpdate": "2025-07-12T13:05:46.031Z"
+    }
+  ]
+}
