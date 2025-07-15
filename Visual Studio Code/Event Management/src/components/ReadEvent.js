@@ -26,14 +26,34 @@ const ReadEvent = () => {
     const fetchEvent = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`http://localhost:9999/events/${id}`);
+
+        // Fetch tất cả accounts
+        const response = await fetch('http://localhost:9999/accounts');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const eventData = await response.json();
-        setEvent(eventData);
+        const accounts = await response.json();
+
+        // TÌM EVENT TRONG TẤT CẢ ACCOUNTS
+        let foundEvent = null;
+
+        for (const account of accounts) {
+          if (account.events && Array.isArray(account.events)) {
+            const event = account.events.find(event => event.id === id);
+            if (event) {
+              foundEvent = event;
+              break;
+            }
+          }
+        }
+
+        if (!foundEvent) {
+          throw new Error('Không tìm thấy sự kiện với ID này');
+        }
+
+        setEvent(foundEvent);
       } catch (error) {
         console.error('❌ Error fetching event:', error);
         setError(error.message);

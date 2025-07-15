@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   Calendar,
   MapPin,
@@ -13,239 +13,320 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const EventList = ({ viewMode = 'grid', filters = {} }) => {
+const EventList = ({ viewMode = 'grid', filters = {}, currentUser }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filteredData, setFilteredData] = useState([]);
+  const [accountData, setAccountData] = useState(null);
   const navigate = useNavigate();
 
-  // ✅ HÀM UPDATE STATUS VÀO DATABASE
-  const updateEventStatusInDB = async (eventId, newStatus) => {
+  // ✅ REF ĐỂ TRACK STATUS ĐÃ ĐƯỢC XỬ LÝ
+  const processedStatusRef = useRef(new Map()); // eventId -> status
+  const isUpdatingRef = useRef(false);
+
+  // ✅ HÀM TÍNH STATUS DỰA TRÊN THỜI GIAN
+  const calculateEventStatus = useCallback(event => {
+    if (!event.active || event.status === 'cancelled' || !event.startDate) {
+      return event.status || 'preparing';
+    }
+
+    const now = new Date();
+    const startTime = new Date(event.startDate);
+    const endTime = new Date(event.endDate || event.startDate);
+    const timeUntilStart = startTime - now;
+    const hoursUntilStart = timeUntilStart / (1000 * 60 * 60);
+
+    if (now > endTime) {
+      return 'completed';
+    } else if (now >= startTime && now <= endTime) {
+      return 'ongoing';
+    } else if (hoursUntilStart <= 12 && hoursUntilStart > 0) {
+      return 'upcoming';
+    } else {
+      return 'preparing';
+    }
+  }, []);
+
+  // ✅ HÀM UPDATE DATABASE - IMMEDIATE SYNC
+  const updateEventInDatabase = async (eventId, newStatus, eventTitle) => {
+    if (!accountData || isUpdatingRef.current) return;
+
     try {
-      const response = await fetch(`http://localhost:9999/events/${eventId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          status: newStatus,
-          lastStatusUpdate: new Date().toISOString(),
-        }),
-      });
+      isUpdatingRef.current = true;
+      console.log(`🔄 [DB] IMMEDIATE sync: "${eventTitle}" → ${newStatus}`);
+
+      const eventIndex = accountData.events.findIndex(
+        event => event.id === eventId
+      );
+      if (eventIndex === -1) {
+        throw new Error(`Event ${eventId} not found`);
+      }
+
+      const updatedEvents = [...accountData.events];
+      updatedEvents[eventIndex] = {
+        ...updatedEvents[eventIndex],
+        status: newStatus,
+        lastStatusUpdate: new Date().toISOString(),
+      };
+
+      const updatedAccount = {
+        ...accountData,
+        events: updatedEvents,
+      };
+
+      // ✅ SYNC NGAY LẬP TỨC - KHÔNG ASYNC
+      const response = await fetch(
+        `http://localhost:9999/accounts/${accountData.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedAccount),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const updatedEvent = await response.json();
-      console.log(
-        `✅ [EventList] Database updated: Event "${updatedEvent.title}" → ${newStatus}`
-      );
-      return updatedEvent;
+      const result = await response.json();
+      setAccountData(result);
+
+      console.log(`✅ [DB] SYNCED: "${eventTitle}" → ${newStatus}`);
+      return true;
     } catch (error) {
-      console.error(
-        `❌ [EventList] Failed to update event ${eventId} in database:`,
-        error
+      console.error(`❌ [DB] FAILED: "${eventTitle}":`, error.message);
+      return false;
+    } finally {
+      isUpdatingRef.current = false;
+    }
+  };
+
+  // ✅ HÀM CHECK VÀ UPDATE STATUS - CHỈ KHI CÓ THAY ĐỔI
+  const checkAndUpdateStatuses = useCallback(async () => {
+    if (!data.length || isUpdatingRef.current) return;
+
+    const statusChanges = [];
+
+    // ✅ CHỈ CHECK EVENTS CÓ TIỀM NĂNG THAY ĐỔI STATUS
+    const eventsToCheck = data.filter(event => {
+      const currentStatus = event.status;
+      const calculatedStatus = calculateEventStatus(event);
+      const lastProcessedStatus = processedStatusRef.current.get(event.id);
+
+      // Chỉ check nếu:
+      // 1. Status hiện tại khác với status tính toán
+      // 2. Chưa được xử lý lần nào
+      // 3. Status đã thay đổi từ lần xử lý trước
+      return (
+        currentStatus !== calculatedStatus ||
+        lastProcessedStatus === undefined ||
+        lastProcessedStatus !== calculatedStatus
       );
-      throw error;
-    }
-  };
-
-  // Auto-update status theo thời gian VÀ UPDATE DATABASE
-  const updateEventStatuses = useCallback(async () => {
-    const now = new Date();
-    const eventsToUpdate = []; // Array để lưu các events cần update database
-
-    setData(prevData => {
-      const newData = prevData.map(event => {
-        if (!event.active || event.status === 'cancelled' || !event.startDate) {
-          return event;
-        }
-
-        const startTime = new Date(event.startDate);
-        const endTime = new Date(event.endDate || event.startDate);
-
-        // Tính thời gian còn lại đến khi bắt đầu
-        const timeUntilStart = startTime - now;
-        const hoursUntilStart = timeUntilStart / (1000 * 60 * 60); // Convert to hours
-
-        let newStatus;
-
-        if (now > endTime) {
-          // Đã kết thúc
-          newStatus = 'completed';
-        } else if (now >= startTime && now <= endTime) {
-          // Đang diễn ra
-          newStatus = 'ongoing';
-        } else if (hoursUntilStart <= 12 && hoursUntilStart > 0) {
-          //Sắp đến giờ (trong vòng 12h)
-          newStatus = 'upcoming';
-        } else {
-          // Còn lâu mới diễn ra
-          newStatus = 'preparing';
-        }
-
-        // ✅ CHỈ UPDATE KHI STATUS THỰC SỰ THAY ĐỔI
-        if (event.status !== newStatus) {
-          console.log(
-            `🔄 [EventList] Event "${event.title}" status: ${
-              event.status
-            } → ${newStatus} (${Math.round(hoursUntilStart)}h until start)`
-          );
-
-          // ✅ Thêm vào danh sách cần update database
-          eventsToUpdate.push({
-            id: event.id,
-            title: event.title,
-            oldStatus: event.status,
-            newStatus: newStatus,
-          });
-
-          return { ...event, status: newStatus };
-        }
-
-        return event;
-      });
-
-      // ✅ UPDATE DATABASE CHO TẤT CẢ EVENTS CÓ THAY ĐỔI
-      if (eventsToUpdate.length > 0) {
-        Promise.allSettled(
-          eventsToUpdate.map(eventUpdate =>
-            updateEventStatusInDB(eventUpdate.id, eventUpdate.newStatus)
-          )
-        ).then(results => {
-          const successful = results.filter(
-            result => result.status === 'fulfilled'
-          ).length;
-          const failed = results.filter(
-            result => result.status === 'rejected'
-          ).length;
-
-          console.log(
-            `📊 [EventList] Database update summary: ${successful} successful, ${failed} failed`
-          );
-
-          // Log chi tiết các lỗi
-          results.forEach((result, index) => {
-            if (result.status === 'rejected') {
-              console.error(
-                `❌ [EventList] Failed to update ${eventsToUpdate[index].title}:`,
-                result.reason
-              );
-            }
-          });
-        });
-      }
-
-      // ✅ CHỈ RETURN DATA MỚI KHI CÓ THAY ĐỔI
-      return eventsToUpdate.length > 0 ? newData : prevData;
     });
-  }, []);
 
-  // ✅ useEffect cho auto-update với database sync
-  useEffect(() => {
-    // Cập nhật ngay khi component mount
-    updateEventStatuses();
+    if (eventsToCheck.length === 0) {
+      return; // Không có gì để update
+    }
 
-    // Thiết lập interval để cập nhật mỗi 30 giây (thay vì 0.5s)
-    const interval = setInterval(() => {
-      updateEventStatuses();
-    }, 30000); // 30 giây
+    console.log(
+      `🔍 [Status Check] Checking ${eventsToCheck.length}/${data.length} events...`
+    );
 
-    // Cleanup khi component unmount
-    return () => clearInterval(interval);
-  }, [updateEventStatuses]);
+    // ✅ XỬ LÝ TỪNG EVENT CÓ THAY ĐỔI
+    for (const event of eventsToCheck) {
+      const newStatus = calculateEventStatus(event);
+      const oldStatus = event.status;
 
-  // ✅ Fetch data với retry logic
-  const fetchEventsWithRetry = async (retries = 3) => {
-    for (let i = 0; i < retries; i++) {
-      try {
-        const response = await fetch('http://localhost:9999/events');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return await response.json();
-      } catch (error) {
-        console.error(`❌ [EventList] Fetch attempt ${i + 1} failed:`, error);
-        if (i === retries - 1) throw error;
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Đợi 1s trước khi retry
+      if (oldStatus !== newStatus) {
+        console.log(
+          `📝 [Status Change] "${event.title}": ${oldStatus} → ${newStatus}`
+        );
+
+        statusChanges.push({
+          id: event.id,
+          title: event.title,
+          oldStatus,
+          newStatus,
+        });
+
+        // ✅ UPDATE DATABASE NGAY LẬP TỨC
+        await updateEventInDatabase(event.id, newStatus, event.title);
       }
+
+      // ✅ MARK AS PROCESSED
+      processedStatusRef.current.set(event.id, newStatus);
+    }
+
+    // ✅ UPDATE UI CHỈ KHI CÓ THAY ĐỔI
+    if (statusChanges.length > 0) {
+      console.log(
+        `🎯 [UI Update] Updating ${statusChanges.length} events in UI...`
+      );
+
+      setData(prevData =>
+        prevData.map(event => {
+          const change = statusChanges.find(c => c.id === event.id);
+          return change ? { ...event, status: change.newStatus } : event;
+        })
+      );
+    }
+  }, [data, calculateEventStatus, accountData]);
+
+  // ✅ REALTIME STATUS MONITORING - CHỈ KHI CẦN THIẾT
+  useEffect(() => {
+    if (!currentUser || !accountData || !data.length) return;
+
+    console.log('🚀 [Realtime] Starting smart status monitoring...');
+
+    // ✅ CHECK NGAY KHI MOUNT
+    checkAndUpdateStatuses();
+
+    // ✅ INTERVAL THÔNG MINH - CHỈ CHECK KHI CẦN
+    const interval = setInterval(() => {
+      checkAndUpdateStatuses();
+    }, 5000); // 5 giây - đủ nhanh cho realtime
+
+    return () => {
+      console.log('🛑 [Realtime] Stopping status monitoring...');
+      clearInterval(interval);
+    };
+  }, [checkAndUpdateStatuses, currentUser, accountData, data.length]);
+
+  // ✅ FETCH ACCOUNT DATA
+  const fetchAccountData = async () => {
+    if (!currentUser?.id) return null;
+
+    try {
+      console.log(
+        `🔍 [Fetch] Loading account data for user ${currentUser.id}...`
+      );
+
+      const response = await fetch(
+        `http://localhost:9999/accounts/${currentUser.id}`
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const accountData = await response.json();
+      console.log(
+        `✅ [Fetch] Account data loaded: ${
+          accountData.events?.length || 0
+        } events`
+      );
+
+      setAccountData(accountData);
+      return accountData.events || [];
+    } catch (error) {
+      console.error('❌ [Fetch] Error loading account data:', error);
+      return [];
     }
   };
 
+  // ✅ LOAD EVENTS KHI CÓ USER
   useEffect(() => {
     const loadEvents = async () => {
+      if (!currentUser) {
+        setLoading(false);
+        setData([]);
+        return;
+      }
+
       try {
         setLoading(true);
-        const data = await fetchEventsWithRetry();
+        const events = await fetchAccountData();
 
-        // ✅ Chỉ lấy events có active = true
-        const activeEvents = data.filter(event => event.active === true);
-        console.log(
-          `📊 [EventList] Loaded ${activeEvents.length} active events`
-        );
-        setData(activeEvents.slice().reverse());
+        const activeEvents = events.filter(event => event.active === true);
+        console.log(`📊 [Load] ${activeEvents.length} active events loaded`);
+
+        const sortedEvents = activeEvents.slice().reverse();
+        setData(sortedEvents);
+
+        // ✅ RESET PROCESSED STATUS TRACKING
+        processedStatusRef.current.clear();
       } catch (error) {
-        console.error('❌ [EventList] Error fetching events:', error);
+        console.error('❌ [Load] Error loading events:', error);
+        setData([]);
       } finally {
         setLoading(false);
       }
     };
 
     loadEvents();
-  }, []);
+  }, [currentUser]);
 
-  // Thêm hàm xử lý hủy sự kiện
+  // ✅ HÀM UPDATE EVENT TRONG ACCOUNT
+  const updateEventInAccount = async (eventId, updatedEventData) => {
+    try {
+      if (!accountData) {
+        throw new Error('Account data not available');
+      }
+
+      const eventIndex = accountData.events.findIndex(
+        event => event.id === eventId
+      );
+      if (eventIndex === -1) {
+        throw new Error('Event not found in account');
+      }
+
+      const updatedEvents = [...accountData.events];
+      updatedEvents[eventIndex] = {
+        ...updatedEvents[eventIndex],
+        ...updatedEventData,
+        lastModified: new Date().toISOString(),
+      };
+
+      const updatedAccount = {
+        ...accountData,
+        events: updatedEvents,
+      };
+
+      console.log(`🔄 [Update] Updating event ${eventId}...`);
+
+      const response = await fetch(
+        `http://localhost:9999/accounts/${accountData.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedAccount),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      setAccountData(result);
+
+      console.log(`✅ [Update] Event ${eventId} updated successfully`);
+      return result;
+    } catch (error) {
+      console.error(`❌ [Update] Failed to update event ${eventId}:`, error);
+      throw error;
+    }
+  };
+
+  // ✅ HÀM HỦY SỰ KIỆN
   const handleCancelEvent = async eventId => {
-    console.log('🔍 Event ID to cancel:', eventId, typeof eventId);
-
     const isConfirmed = window.confirm(
       'Bạn có chắc chắn muốn hủy sự kiện này không? Sự kiện sẽ được đánh dấu là "Đã hủy" và không thể hoàn tác.'
     );
     if (!isConfirmed) return;
 
     try {
-      // Tìm event với ID
       const eventToUpdate = data.find(event => event.id === eventId);
-
-      console.log('🔍 Event found:', eventToUpdate);
-
       if (!eventToUpdate) {
-        console.error('❌ Event not found with ID:', eventId);
-        alert('Không tìm thấy sự kiện!');
-        return;
+        throw new Error('Event not found');
       }
 
-      // Chuẩn bị dữ liệu update
-      const updatedEvent = {
-        ...eventToUpdate,
-        status: 'cancelled',
-        cancelledAt: new Date().toISOString(), // Thêm timestamp khi hủy
-      };
+      console.log(`🚫 [Cancel] Cancelling event: ${eventToUpdate.title}`);
 
-      console.log('🔍 Updated event data:', updatedEvent);
-
-      // Gửi request PUT
-      const response = await fetch(`http://localhost:9999/events/${eventId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedEvent),
-      });
-
-      console.log('🔍 Response status:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Response error:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('✅ Cancel result:', result);
-
-      // Cập nhật state local
+      // ✅ UPDATE UI NGAY LẬP TỨC
       setData(prevData =>
         prevData.map(event =>
           event.id === eventId
@@ -258,6 +339,15 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
         )
       );
 
+      // ✅ UPDATE DATABASE
+      await updateEventInAccount(eventId, {
+        status: 'cancelled',
+        cancelledAt: new Date().toISOString(),
+      });
+
+      // ✅ UPDATE PROCESSED STATUS
+      processedStatusRef.current.set(eventId, 'cancelled');
+
       alert('Hủy sự kiện thành công!');
     } catch (error) {
       console.error('❌ Error cancelling event:', error);
@@ -265,57 +355,32 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
     }
   };
 
-  //xử lý xóa mềm
+  // ✅ HÀM XÓA MỀM
   const handleSoftDelete = async eventId => {
-    console.log('🔍 Event ID to delete:', eventId, typeof eventId);
-
     const isConfirmed = window.confirm(
       'Bạn có chắc chắn muốn xóa sự kiện này không?'
     );
     if (!isConfirmed) return;
 
     try {
-      // Tìm event với ID (giờ tất cả đều là number)
       const eventToUpdate = data.find(event => event.id === eventId);
-
-      console.log('🔍 Event found:', eventToUpdate);
-
       if (!eventToUpdate) {
-        console.error('❌ Event not found with ID:', eventId);
-        alert('Không tìm thấy sự kiện!');
-        return;
+        throw new Error('Event not found');
       }
 
-      // Chuẩn bị dữ liệu update
-      const updatedEvent = {
-        ...eventToUpdate,
+      console.log(`🗑️ [Delete] Soft deleting event: ${eventToUpdate.title}`);
+
+      // ✅ UPDATE UI NGAY LẬP TỨC
+      setData(prevData => prevData.filter(event => event.id !== eventId));
+
+      // ✅ UPDATE DATABASE
+      await updateEventInAccount(eventId, {
         active: false,
-      };
-
-      console.log('🔍 Updated event data:', updatedEvent);
-
-      // Gửi request PUT
-      const response = await fetch(`http://localhost:9999/events/${eventId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedEvent),
+        deletedAt: new Date().toISOString(),
       });
 
-      console.log('🔍 Response status:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Response error:', errorText);
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('✅ Update result:', result);
-
-      // Cập nhật state local - loại bỏ event đã soft delete
-      setData(prevData => prevData.filter(event => event.id !== eventId));
+      // ✅ REMOVE FROM PROCESSED STATUS
+      processedStatusRef.current.delete(eventId);
 
       alert('Xóa sự kiện thành công!');
     } catch (error) {
@@ -324,7 +389,7 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
     }
   };
 
-  // Filter data based on filters
+  // ✅ FILTER DATA
   useEffect(() => {
     let filtered = [...data];
 
@@ -340,8 +405,7 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
 
     if (filters.categories && filters.categories.length > 0) {
       filtered = filtered.filter(event => {
-        // Kiểm tra xem event có ít nhất 1 category trùng với filter
-        return filters.categories.every(
+        return filters.categories.some(
           filterCat =>
             event.category?.toLowerCase() === filterCat.toLowerCase() ||
             (event.categories &&
@@ -377,6 +441,7 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
     setFilteredData(filtered);
   }, [data, filters]);
 
+  // ✅ UTILITY FUNCTIONS
   const formatDateTime = dateString => {
     if (!dateString) return '';
     const date = new Date(dateString);
@@ -413,7 +478,6 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
       marketing: '/image/marketing.jpg',
       training: '/image/training.png',
     };
-    // Ưu tiên lấy category đầu tiên từ mảng categories
     let targetCategory = null;
 
     if (categories && Array.isArray(categories) && categories.length > 0) {
@@ -474,7 +538,7 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
     );
   };
 
-  // GRID LAYOUT COMPONENT
+  // ✅ GRID LAYOUT
   const GridLayout = () => (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
       {filteredData.map((event, index) => {
@@ -490,14 +554,12 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
             key={eventId}
             className="group bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-gray-200 transition-all duration-300 overflow-hidden cursor-pointer transform hover:-translate-y-1 flex flex-col h-full"
           >
-            {/* Header with Category Image - Cố định chiều cao */}
             <div
               className="h-44 relative bg-cover bg-center bg-no-repeat flex-shrink-0"
               style={{ backgroundImage: `url(${categoryImage})` }}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
 
-              {/* Category Badge */}
               <div className="absolute top-4 left-4 z-10">
                 {event.category && (
                   <span className="px-3 py-1.5 bg-white/95 backdrop-blur-sm text-gray-800 rounded-full text-xs font-semibold capitalize shadow-lg border border-white/20">
@@ -506,7 +568,6 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                 )}
               </div>
 
-              {/* Status Badge */}
               <div className="absolute top-3 right-4 z-10">
                 {getStatusBadge(event.status)}
               </div>
@@ -514,16 +575,13 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
               <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/10 transition-all duration-300"></div>
             </div>
 
-            {/* Card Content - Flex grow để chiếm hết không gian còn lại */}
             <div className="p-6 flex flex-col flex-grow">
-              {/* Title - Cố định chiều cao */}
               <div className="h-6 mb-3 flex items-start">
                 <h3 className="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
                   {event.title || `Event ${index + 1}`}
                 </h3>
               </div>
 
-              {/* Description - Cố định chiều cao */}
               <div className="h-8 mb-10">
                 {event.description && (
                   <p className="text-gray-600 text-sm line-clamp-2 leading-relaxed">
@@ -532,9 +590,7 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                 )}
               </div>
 
-              {/* Event Details - Cố định chiều cao cho từng item */}
               <div className="space-y-3 mb-5 flex-grow">
-                {/* Date - Luôn hiển thị, cố định chiều cao */}
                 <div className="h-8 flex items-center">
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -546,7 +602,6 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                   </div>
                 </div>
 
-                {/* Location - Luôn hiển thị, cố định chiều cao */}
                 <div className="h-8 flex items-center">
                   {locationText ? (
                     <div className="flex items-center gap-3 text-sm text-gray-700">
@@ -569,7 +624,6 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                   )}
                 </div>
 
-                {/* Attendees - Luôn hiển thị, cố định chiều cao */}
                 <div className="h-8 flex items-center">
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -581,7 +635,6 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                   </div>
                 </div>
 
-                {/* Budget - Luôn hiển thị, cố định chiều cao */}
                 <div className="h-8 flex items-center">
                   <div className="flex items-center gap-3 text-sm text-gray-700">
                     <div className="w-8 h-8 bg-green-50 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -594,8 +647,7 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                 </div>
               </div>
 
-              {/* Action Buttons - Luôn ở dưới cùng */}
-              <div className="flex justify-center gap-2 pt-4 border-t border-gray-100 mt-auto">
+              <div className="flex justify-center gap-1 pt-4 border-t border-gray-100 mt-auto">
                 <button
                   onClick={() => navigate(`/read/${event.id}`)}
                   className="flex-1 p-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group/btn"
@@ -638,7 +690,7 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
     </div>
   );
 
-  // LIST LAYOUT COMPONENT (giữ nguyên code của bạn)
+  // ✅ LIST LAYOUT
   const ListLayout = () => (
     <div className="space-y-4">
       {filteredData.map((event, index) => {
@@ -655,7 +707,6 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
             className="group bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg hover:border-gray-200 transition-all duration-300 overflow-hidden"
           >
             <div className="flex items-center p-6 gap-6">
-              {/* Event Image */}
               <div
                 className="w-32 h-24 rounded-lg bg-cover bg-center bg-no-repeat flex-shrink-0 relative overflow-hidden"
                 style={{ backgroundImage: `url(${categoryImage})` }}
@@ -670,7 +721,6 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                 )}
               </div>
 
-              {/* Event Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between mb-3">
                   <h3 className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
@@ -687,7 +737,6 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                   </p>
                 )}
 
-                {/* Event Details Row */}
                 <div className="flex flex-wrap gap-6 text-sm text-gray-600 mb-4">
                   {event.startDate && (
                     <div className="flex items-center gap-2">
@@ -721,18 +770,17 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex items-center gap-2 flex-shrink-0">
                 <button
                   onClick={() => navigate(`/read/${event.id}`)}
-                  className="flex-1 p-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group/btn"
+                  className="p-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group/btn"
                   title="Xem chi tiết"
                 >
                   <Eye className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
                 </button>
                 <button
                   onClick={() => navigate(`/update/${event.id}`)}
-                  className="flex-1 p-3 text-gray-500 hover:text-green-600 hover:bg-blue-50 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group/btn"
+                  className="p-3 text-gray-500 hover:text-green-600 hover:bg-blue-50 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group/btn"
                   title="Chỉnh sửa sự kiện"
                 >
                   <Edit className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
@@ -760,6 +808,23 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
       })}
     </div>
   );
+
+  // ✅ LOADING STATE
+  if (!currentUser) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+          <Calendar className="h-12 w-12 text-gray-400" />
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          Đang chờ thông tin đăng nhập
+        </h3>
+        <p className="text-gray-600">
+          Vui lòng đăng nhập để xem danh sách sự kiện của bạn
+        </p>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -818,7 +883,7 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
         </div>
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
           {data.length === 0
-            ? 'Chưa có sự kiện nào'
+            ? 'Bạn chưa có sự kiện nào'
             : 'Không tìm thấy sự kiện phù hợp'}
         </h3>
         <p className="text-gray-600">
@@ -830,14 +895,15 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
     );
   }
 
+  // ✅ MAIN RENDER
   return (
     <div>
-      {/* Header với thông tin auto-update */}
+      {/* Header với smart monitoring status */}
       <div className="mb-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              Tất cả sự kiện
+              Danh sách sự kiện
             </h2>
             <p className="text-gray-600">
               {filteredData.length} sự kiện{' '}
@@ -845,9 +911,28 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
                 `(từ ${data.length} sự kiện)`}
             </p>
           </div>
+
+          {/* ✅ SMART MONITORING INDICATORS */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 text-sm text-green-600">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>Smart Monitor</span>
+            </div>
+
+            {isUpdatingRef.current && (
+              <div className="flex items-center gap-2 text-sm text-blue-600">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <span>Syncing DB...</span>
+              </div>
+            )}
+
+            <div className="text-xs text-gray-500">
+              Tracked: {processedStatusRef.current.size}/{data.length}
+            </div>
+          </div>
         </div>
 
-        {/* Status summary bar */}
+        {/* ✅ STATUS SUMMARY BAR */}
         <div className="mt-4 flex flex-wrap gap-3 items-center">
           {['preparing', 'upcoming', 'ongoing', 'completed', 'cancelled'].map(
             status => {
@@ -869,7 +954,7 @@ const EventList = ({ viewMode = 'grid', filters = {} }) => {
         </div>
       </div>
 
-      {/* Render layout based on viewMode */}
+      {/* ✅ RENDER LAYOUT */}
       {viewMode === 'grid' ? <GridLayout /> : <ListLayout />}
     </div>
   );

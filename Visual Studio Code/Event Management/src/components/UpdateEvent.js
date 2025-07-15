@@ -57,6 +57,7 @@ const UpdateEvent = () => {
   // State
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [originalEvent, setOriginalEvent] = useState(null);
+  const [maiquocAccount, setMaiquocAccount] = useState(null);
   const [errors, setErrors] = useState({});
   const [showErrors, setShowErrors] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,58 +65,82 @@ const UpdateEvent = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
 
-  // Fetch event data
+  // Fetch event data from accounts
   useEffect(() => {
     const fetchEvent = async () => {
       try {
         setIsLoading(true);
         setLoadError(null);
 
-        const response = await fetch(`http://localhost:9999/events/${id}`);
+        // Fetch tất cả accounts
+        const response = await fetch('http://localhost:9999/accounts');
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const eventData = await response.json();
-        setOriginalEvent(eventData);
+        const accounts = await response.json();
+
+        // TÌM EVENT TRONG TẤT CẢ ACCOUNTS
+        let foundEvent = null;
+        let ownerAccount = null;
+
+        for (const account of accounts) {
+          if (account.events && Array.isArray(account.events)) {
+            const event = account.events.find(event => event.id === id);
+            if (event) {
+              foundEvent = event;
+              ownerAccount = account;
+              break;
+            }
+          }
+        }
+
+        if (!foundEvent || !ownerAccount) {
+          throw new Error('Không tìm thấy sự kiện với ID này');
+        }
+
+        setOriginalEvent(foundEvent);
+        setMaiquocAccount(ownerAccount);
 
         // Convert event data to form format
-        const startDate = eventData.startDate
-          ? new Date(eventData.startDate)
+        const startDate = foundEvent.startDate
+          ? new Date(foundEvent.startDate)
           : null;
-        const endDate = eventData.endDate ? new Date(eventData.endDate) : null;
+        const endDate = foundEvent.endDate
+          ? new Date(foundEvent.endDate)
+          : null;
 
         // Find primary category (first in the list)
         let primaryCategoryId = '';
         let additionalCategoryIds = [];
 
-        if (eventData.categoryIds && eventData.categoryIds.length > 0) {
-          primaryCategoryId = eventData.categoryIds[0].toString();
-          additionalCategoryIds = eventData.categoryIds
+        if (foundEvent.categoryIds && foundEvent.categoryIds.length > 0) {
+          primaryCategoryId = foundEvent.categoryIds[0].toString();
+          additionalCategoryIds = foundEvent.categoryIds
             .slice(1)
             .map(catId => catId.toString());
         }
 
         setFormData({
-          title: eventData.title || '',
-          description: eventData.description || '',
+          title: foundEvent.title || '',
+          description: foundEvent.description || '',
           primaryCategory: primaryCategoryId,
           additionalCategories: additionalCategoryIds,
           date: startDate ? startDate.toISOString().split('T')[0] : '',
           startTime: startDate ? startDate.toTimeString().substring(0, 5) : '',
           endTime: endDate ? endDate.toTimeString().substring(0, 5) : '',
           location: {
-            venue: eventData.location?.venue || '',
-            address: eventData.location?.address || '',
-            phone: eventData.location?.phone || '',
-            email: eventData.location?.email || '',
+            venue: foundEvent.location?.venue || '',
+            address: foundEvent.location?.address || '',
+            phone: foundEvent.location?.phone || '',
+            email: foundEvent.location?.email || '',
           },
-          organizer: eventData.organizer || '',
-          estimatedAttendees: eventData.estimatedAttendees?.toString() || '',
-          actualAttendees: eventData.actualAttendees?.toString() || '',
-          budget: eventData.budget?.toString() || '',
-          status: eventData.status || '',
+          organizer: foundEvent.organizer || '',
+          estimatedAttendees: foundEvent.estimatedAttendees?.toString() || '',
+          actualAttendees: foundEvent.actualAttendees?.toString() || '',
+          budget: foundEvent.budget?.toString() || '',
+          status: foundEvent.status || '',
         });
       } catch (error) {
         console.error('Error fetching event:', error);
@@ -183,25 +208,46 @@ const UpdateEvent = () => {
     };
   };
 
-  // API Functions
   const submitToBackend = async eventData => {
     try {
-      const response = await fetch(`http://localhost:9999/events/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(eventData),
-      });
+      // Tìm index của event cần update trong mảng events của owner account
+      const eventIndex = maiquocAccount.events.findIndex(
+        event => event.id === id
+      );
+
+      if (eventIndex === -1) {
+        throw new Error('Không tìm thấy sự kiện để cập nhật');
+      }
+
+      // Tạo mảng events mới với event đã được cập nhật
+      const updatedEvents = [...maiquocAccount.events];
+      updatedEvents[eventIndex] = eventData;
+
+      // Tạo account object mới với events đã được cập nhật
+      const updatedAccount = {
+        ...maiquocAccount,
+        events: updatedEvents,
+      };
+
+      // Gửi PUT request để cập nhật account của owner
+      const response = await fetch(
+        `http://localhost:9999/accounts/${maiquocAccount.id}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedAccount),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
       return {
         success: true,
-        id: result.id,
+        id: eventData.id,
         message: 'Event updated successfully',
-        data: result,
+        data: eventData,
       };
     } catch (error) {
       if (error.message.includes('Failed to fetch')) {

@@ -37,276 +37,850 @@
       "name": "Training"
     }
   ],
-  "events": [
+  "accounts": [
     {
       "id": "1",
-      "title": "Tech Conference 2024",
-      "description": "Hội thảo công nghệ lớn nhất năm với các chuyên gia hàng đầu",
-      "categories": [
-        "Technology",
-        "Education",
-        "Business"
+      "username": "maiquoc",
+      "password": "123456",
+      "events": [
+        {
+          "id": "1",
+          "title": "Tech Conference 2024",
+          "description": "Hội thảo công nghệ lớn nhất năm với các chuyên gia hàng đầu",
+          "categories": [
+            "Technology",
+            "Education",
+            "Business"
+          ],
+          "categoryIds": [
+            1,
+            3,
+            2
+          ],
+          "active": true,
+          "startDate": "2024-08-15T09:00:00Z",
+          "endDate": "2024-08-15T17:00:00Z",
+          "location": {
+            "venue": "Trung tâm Hội nghị Quốc gia",
+            "address": "123 Đường ABC, Quận 1, TP.HCM",
+            "phone": "028-1234-5678",
+            "email": "contact@conference.vn"
+          },
+          "organizer": "Tech Events Vietnam",
+          "estimatedAttendees": 500,
+          "actualAttendees": 485,
+          "budget": 50000000,
+          "status": "cancelled",
+          "cancelledAt": "2025-07-12T03:45:13.367Z"
+        },
+        {
+          "id": "2",
+          "title": "Team Building Q3",
+          "description": "Hoạt động team building cho toàn bộ nhân viên",
+          "categories": [
+            "Internal",
+            "Entertainment",
+            "Training"
+          ],
+          "categoryIds": [
+            7,
+            4,
+            9
+          ],
+          "active": true,
+          "startDate": "2024-08-20T08:00:00Z",
+          "endDate": "2024-08-20T18:00:00Z",
+          "location": {
+            "venue": "Resort Vũng Tàu",
+            "address": "Bãi Trước, Vũng Tàu",
+            "phone": "0254-123-456",
+            "email": "booking@vungtauresort.com"
+          },
+          "organizer": "HR Department",
+          "estimatedAttendees": 150,
+          "actualAttendees": null,
+          "budget": 30000000,
+          "status": "cancelled",
+          "lastStatusUpdate": "2025-07-12T03:26:01.291Z",
+          "cancelledAt": "2025-07-12T12:27:45.730Z"
+        },
+        {
+          "id": "3",
+          "title": "Product Launch Event",
+          "description": "Ra mắt sản phẩm mới với khách hàng và đối tác",
+          "categories": [
+            "Marketing",
+            "Business",
+            "Entertainment"
+          ],
+          "categoryIds": [
+            8,
+            2,
+            4
+          ],
+          "active": true,
+          "startDate": "2024-09-10T19:00:00Z",
+          "endDate": "2024-09-10T22:00:00Z",
+          "location": {
+            "venue": "Khách sạn Rex",
+            "address": "141 Nguyễn Huệ, Quận 1, TP.HCM",
+            "phone": "028-3829-2185",
+            "email": "events@rexhotel.com.vn"
+          },
+          "organizer": "Marketing Team",
+          "estimatedAttendees": 200,
+          "actualAttendees": null,
+          "budget": 25000000,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T17:20:53.698Z"
+        },
+        {
+          "id": "4",
+          "title": "Annual Sports Day 2024",
+          "description": "Ngày hội thể thao thường niên dành cho nhân viên và gia đình",
+          "categories": [
+            "Sports",
+            "Internal",
+            "Entertainment",
+            "Health"
+          ],
+          "categoryIds": [
+            5,
+            7,
+            4,
+            6
+          ],
+          "active": true,
+          "startDate": "2024-09-25T07:00:00Z",
+          "endDate": "2024-09-25T17:00:00Z",
+          "location": {
+            "venue": "Sân vận động Thống Nhất",
+            "address": "138 Đào Duy Từ, Quận 10, TP.HCM",
+            "phone": "028-3862-4397",
+            "email": "booking@thongnhatstadium.vn"
+          },
+          "organizer": "Sports Club",
+          "estimatedAttendees": 300,
+          "actualAttendees": null,
+          "budget": 15000000,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T10:31:07.687Z"
+        },
+        {
+          "id": "5",
+          "title": "Health & Wellness Workshop",
+          "description": "Hội thảo sức khỏe và chăm sóc tinh thần cho nhân viên",
+          "categories": [
+            "Health",
+            "Education",
+            "Training",
+            "Internal"
+          ],
+          "categoryIds": [
+            6,
+            3,
+            9,
+            7
+          ],
+          "active": true,
+          "startDate": "2024-10-05T14:00:00Z",
+          "endDate": "2024-10-05T17:00:00Z",
+          "location": {
+            "venue": "Yoga Studio Serenity",
+            "address": "45 Thảo Điền, Quận 2, TP.HCM",
+            "phone": "028-3744-5566",
+            "email": "booking@serenityyoga.vn"
+          },
+          "organizer": "Wellness Committee",
+          "estimatedAttendees": 80,
+          "actualAttendees": null,
+          "budget": 8000000,
+          "status": "cancelled"
+        },
+        {
+          "id": "6",
+          "title": "Customer Appreciation Dinner",
+          "description": "Tiệc tri ân khách hàng VIP cuối năm",
+          "categories": [
+            "Business",
+            "Marketing",
+            "Entertainment"
+          ],
+          "categoryIds": [
+            2,
+            8,
+            4
+          ],
+          "active": true,
+          "startDate": "2024-11-20T18:30:00Z",
+          "endDate": "2024-11-20T22:00:00Z",
+          "location": {
+            "venue": "InterContinental Saigon",
+            "address": "Corner of Hai Ba Trung & Le Duan, Quận 1, TP.HCM",
+            "phone": "028-3520-9999",
+            "email": "events@intercontinental.com"
+          },
+          "organizer": "Sales Department",
+          "estimatedAttendees": 120,
+          "actualAttendees": null,
+          "budget": 45000000,
+          "status": "cancelled",
+          "lastStatusUpdate": "2025-07-12T03:26:01.291Z",
+          "cancelledAt": "2025-07-12T12:33:12.165Z"
+        },
+        {
+          "id": "7",
+          "title": "done",
+          "description": "done",
+          "categories": [
+            "Technology",
+            "Business"
+          ],
+          "categoryIds": [
+            1,
+            2
+          ],
+          "active": true,
+          "startDate": "2025-07-11T02:48:00.000Z",
+          "endDate": "2025-07-11T02:51:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "a",
+          "estimatedAttendees": 12,
+          "actualAttendees": null,
+          "budget": 12,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T10:31:07.686Z"
+        },
+        {
+          "id": "8",
+          "title": "svd",
+          "description": "svd",
+          "categories": [
+            "Entertainment",
+            "Business"
+          ],
+          "categoryIds": [
+            4,
+            2
+          ],
+          "active": true,
+          "startDate": "2025-07-12T13:00:00.000Z",
+          "endDate": "2025-07-12T14:49:00.000Z",
+          "location": {
+            "venue": "svd",
+            "address": "svd",
+            "phone": "0123456789",
+            "email": "quoc@gmail.com"
+          },
+          "organizer": "quoc",
+          "estimatedAttendees": 200000,
+          "actualAttendees": 500000,
+          "budget": 1000000000,
+          "status": "cancelled",
+          "lastStatusUpdate": "2025-07-12T12:18:55.284Z",
+          "cancelledAt": "2025-07-12T12:26:25.647Z"
+        },
+        {
+          "id": "9",
+          "title": "k",
+          "description": "k",
+          "categories": [
+            "Sports",
+            "Health"
+          ],
+          "categoryIds": [
+            5,
+            6
+          ],
+          "active": true,
+          "startDate": "2025-07-12T11:05:00.000Z",
+          "endDate": "2025-07-12T13:05:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "k",
+          "estimatedAttendees": 1,
+          "actualAttendees": null,
+          "budget": 1,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T10:31:07.686Z"
+        },
+        {
+          "id": "10",
+          "title": "abc",
+          "description": "abc",
+          "categories": [
+            "Technology",
+            "Business"
+          ],
+          "categoryIds": [
+            1,
+            2
+          ],
+          "active": true,
+          "startDate": "2025-07-15T09:02:00.000Z",
+          "endDate": "2025-07-15T09:15:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "abc",
+          "estimatedAttendees": 123123,
+          "actualAttendees": null,
+          "budget": 123123,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T17:20:58.000Z"
+        },
+        {
+          "id": "11",
+          "title": "q",
+          "description": "q",
+          "categories": [
+            "Education",
+            "Sports"
+          ],
+          "categoryIds": [
+            3,
+            5
+          ],
+          "active": true,
+          "startDate": "2025-07-15T13:06:00.000Z",
+          "endDate": "2025-07-15T16:06:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "q",
+          "estimatedAttendees": 123123,
+          "actualAttendees": null,
+          "budget": 123123,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T17:20:44.169Z"
+        },
+        {
+          "id": "12",
+          "title": "w",
+          "description": "o",
+          "categories": [
+            "Marketing",
+            "Education",
+            "Health"
+          ],
+          "categoryIds": [
+            8,
+            3,
+            6
+          ],
+          "active": true,
+          "startDate": "2025-07-18T09:09:00.000Z",
+          "endDate": "2025-07-18T14:09:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "o",
+          "estimatedAttendees": 789789,
+          "actualAttendees": null,
+          "budget": 789789,
+          "status": "preparing",
+          "lastStatusUpdate": "2025-07-15T17:22:36.945Z"
+        },
+        {
+          "id": "13",
+          "title": "quoc",
+          "description": "quoc",
+          "categories": [
+            "Training",
+            "Education"
+          ],
+          "categoryIds": [
+            9,
+            3
+          ],
+          "active": false,
+          "startDate": "2025-07-15T09:29:00.000Z",
+          "endDate": "2025-07-15T09:38:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "quoc",
+          "estimatedAttendees": 123,
+          "actualAttendees": null,
+          "budget": 123,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T17:22:30.630Z"
+        },
+        {
+          "id": "14",
+          "title": "ca",
+          "description": "ca",
+          "categories": [
+            "Entertainment"
+          ],
+          "categoryIds": [
+            4
+          ],
+          "active": true,
+          "startDate": "2025-07-15T09:45:00.000Z",
+          "endDate": "2025-07-15T09:50:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "ca",
+          "estimatedAttendees": 123123,
+          "actualAttendees": null,
+          "budget": 123123,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T17:22:29.995Z"
+        },
+        {
+          "id": "15",
+          "title": "hu",
+          "description": "hu",
+          "categories": [
+            "Business",
+            "Technology"
+          ],
+          "categoryIds": [
+            2,
+            1
+          ],
+          "active": true,
+          "startDate": "2025-07-17T10:15:00.000Z",
+          "endDate": "2025-07-17T14:16:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "hu",
+          "estimatedAttendees": 123123,
+          "actualAttendees": null,
+          "budget": 1231321,
+          "status": "preparing",
+          "lastStatusUpdate": "2025-07-15T17:20:46.417Z"
+        },
+        {
+          "id": "16",
+          "title": "l",
+          "description": "l",
+          "categories": [
+            "Technology",
+            "Entertainment"
+          ],
+          "categoryIds": [
+            1,
+            4
+          ],
+          "active": false,
+          "startDate": "2025-07-18T10:17:00.000Z",
+          "endDate": "2025-07-18T10:20:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "l",
+          "estimatedAttendees": 123123131,
+          "actualAttendees": null,
+          "budget": 124143123123124,
+          "status": "preparing",
+          "lastStatusUpdate": "2025-07-15T10:31:07.685Z"
+        },
+        {
+          "id": "17",
+          "title": "i",
+          "description": "i",
+          "categories": [
+            "Business"
+          ],
+          "categoryIds": [
+            2
+          ],
+          "active": true,
+          "startDate": "2025-07-15T10:25:00.000Z",
+          "endDate": "2025-07-15T11:28:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "i",
+          "estimatedAttendees": 1231,
+          "actualAttendees": null,
+          "budget": 123123,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T17:20:44.331Z"
+        },
+        {
+          "id": "18",
+          "title": "t",
+          "description": "t",
+          "categories": [
+            "Business"
+          ],
+          "categoryIds": [
+            2
+          ],
+          "active": true,
+          "startDate": "2025-07-15T10:31:00.000Z",
+          "endDate": "2025-07-15T10:34:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "t",
+          "estimatedAttendees": 1231,
+          "actualAttendees": null,
+          "budget": 123123,
+          "status": "cancelled",
+          "lastStatusUpdate": "2025-07-15T17:22:28.797Z",
+          "cancelledAt": "2025-07-15T17:26:12.719Z"
+        },
+        {
+          "title": "up1",
+          "description": "up1",
+          "categories": [
+            "Business"
+          ],
+          "categoryIds": [
+            2
+          ],
+          "active": true,
+          "startDate": "2025-07-14T18:33:00.000Z",
+          "endDate": "2025-07-14T20:33:00.000Z",
+          "location": {
+            "venue": "a",
+            "address": "a",
+            "phone": "0123456789",
+            "email": "a@gmail.com"
+          },
+          "organizer": "up",
+          "estimatedAttendees": 12312,
+          "actualAttendees": 40000,
+          "budget": 312312,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T17:22:28.922Z",
+          "id": "19"
+        },
+        {
+          "title": "hello",
+          "description": "hi",
+          "categories": [
+            "Technology"
+          ],
+          "categoryIds": [
+            1
+          ],
+          "active": true,
+          "startDate": "2025-07-15T18:34:00.000Z",
+          "endDate": "2025-07-15T19:34:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "hi",
+          "estimatedAttendees": 32312,
+          "actualAttendees": null,
+          "budget": 1412312,
+          "status": "completed",
+          "lastStatusUpdate": "2025-07-15T20:35:25.125Z",
+          "id": "20"
+        },
+        {
+          "title": "hi",
+          "description": "hi",
+          "categories": [
+            "Education",
+            "Business"
+          ],
+          "categoryIds": [
+            3,
+            2
+          ],
+          "active": true,
+          "startDate": "2025-07-15T18:25:00.000Z",
+          "endDate": "2025-07-15T21:26:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "hi",
+          "estimatedAttendees": 200000,
+          "actualAttendees": null,
+          "budget": 200000000,
+          "status": "ongoing",
+          "lastStatusUpdate": "2025-07-15T20:35:28.332Z",
+          "id": "21"
+        },
+        {
+          "title": "hi",
+          "description": "hi",
+          "categories": [
+            "Education",
+            "Technology"
+          ],
+          "categoryIds": [
+            3,
+            1
+          ],
+          "active": true,
+          "startDate": "2025-07-15T18:26:00.000Z",
+          "endDate": "2025-07-15T22:27:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "hi",
+          "estimatedAttendees": 123,
+          "actualAttendees": null,
+          "budget": 123,
+          "status": "ongoing",
+          "lastStatusUpdate": "2025-07-15T20:39:00.612Z",
+          "id": "22"
+        },
+        {
+          "title": "chào",
+          "description": "lô",
+          "categories": [
+            "Education"
+          ],
+          "categoryIds": [
+            3
+          ],
+          "active": true,
+          "startDate": "2025-07-15T20:39:00.000Z",
+          "endDate": "2025-07-15T23:40:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "lô",
+          "estimatedAttendees": 123123,
+          "actualAttendees": null,
+          "budget": 123123,
+          "status": "ongoing",
+          "lastStatusUpdate": "2025-07-15T20:40:38.875Z",
+          "id": "23"
+        },
+        {
+          "title": "fix id",
+          "description": "lo",
+          "categories": [
+            "Marketing"
+          ],
+          "categoryIds": [
+            8
+          ],
+          "active": true,
+          "startDate": "2025-07-16T01:42:00.000Z",
+          "endDate": "2025-07-16T03:42:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "i",
+          "estimatedAttendees": 90,
+          "actualAttendees": null,
+          "budget": 90,
+          "status": "upcoming",
+          "lastStatusUpdate": "2025-07-15T20:42:48.310Z",
+          "id": "24"
+        }
       ],
-      "categoryIds": [
-        1,
-        3,
-        2
-      ],
-      "active": true,
-      "startDate": "2024-08-15T09:00:00Z",
-      "endDate": "2024-08-15T17:00:00Z",
-      "location": {
-        "venue": "Trung tâm Hội nghị Quốc gia",
-        "address": "123 Đường ABC, Quận 1, TP.HCM",
-        "phone": "028-1234-5678",
-        "email": "contact@conference.vn"
-      },
-      "organizer": "Tech Events Vietnam",
-      "estimatedAttendees": 500,
-      "actualAttendees": 485,
-      "budget": 50000000,
-      "status": "cancelled",
-      "cancelledAt": "2025-07-12T03:45:13.367Z"
+      "lastLogin": "2025-07-15T19:47:51.486Z",
+      "isActive": false,
+      "lastLogout": "2025-07-15T20:48:17.715Z"
     },
     {
       "id": "2",
-      "title": "Team Building Q3",
-      "description": "Hoạt động team building cho toàn bộ nhân viên",
-      "categories": [
-        "Internal",
-        "Entertainment",
-        "Training"
+      "username": "admin",
+      "password": "123456",
+      "events": [
+        {
+          "title": "lol",
+          "description": "lol",
+          "categories": [
+            "Entertainment"
+          ],
+          "categoryIds": [
+            4
+          ],
+          "active": true,
+          "startDate": "2025-07-14T19:04:00.000Z",
+          "endDate": "2025-07-14T23:04:00.000Z",
+          "location": {
+            "venue": "lol",
+            "address": "lol",
+            "phone": "0123456789",
+            "email": "lol@gmail.com"
+          },
+          "organizer": "lol",
+          "estimatedAttendees": 123,
+          "actualAttendees": 234,
+          "budget": 123,
+          "status": "preparing",
+          "lastStatusUpdate": "2025-07-15T19:04:27.133Z",
+          "id": "1"
+        },
+        {
+          "title": "kk",
+          "description": "kk",
+          "categories": [
+            "Health"
+          ],
+          "categoryIds": [
+            6
+          ],
+          "active": false,
+          "startDate": "2025-07-17T19:15:00.000Z",
+          "endDate": "2025-07-17T22:15:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "kk",
+          "estimatedAttendees": 123,
+          "actualAttendees": null,
+          "budget": 123,
+          "status": "cancelled",
+          "lastStatusUpdate": "2025-07-15T19:15:18.738Z",
+          "id": "2",
+          "cancelledAt": "2025-07-15T19:15:37.333Z"
+        }
       ],
-      "categoryIds": [
-        7,
-        4,
-        9
-      ],
-      "active": true,
-      "startDate": "2024-08-20T08:00:00Z",
-      "endDate": "2024-08-20T18:00:00Z",
-      "location": {
-        "venue": "Resort Vũng Tàu",
-        "address": "Bãi Trước, Vũng Tàu",
-        "phone": "0254-123-456",
-        "email": "booking@vungtauresort.com"
-      },
-      "organizer": "HR Department",
-      "estimatedAttendees": 150,
-      "actualAttendees": null,
-      "budget": 30000000,
-      "status": "cancelled",
-      "lastStatusUpdate": "2025-07-12T03:26:01.291Z",
-      "cancelledAt": "2025-07-12T12:27:45.730Z"
+      "lastLogin": "2025-07-15T18:43:30.218Z",
+      "isActive": false,
+      "lastLogout": "2025-07-15T19:24:41.139Z"
     },
     {
       "id": "3",
-      "title": "Product Launch Event",
-      "description": "Ra mắt sản phẩm mới với khách hàng và đối tác",
-      "categories": [
-        "Marketing",
-        "Business",
-        "Entertainment"
+      "username": "root",
+      "password": "123456",
+      "events": [
+        {
+          "title": "lô",
+          "description": "lô",
+          "categories": [
+            "Technology"
+          ],
+          "categoryIds": [
+            1
+          ],
+          "active": true,
+          "startDate": "2025-07-15T19:25:00.000Z",
+          "endDate": "2025-07-16T00:26:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "lô",
+          "estimatedAttendees": 100,
+          "actualAttendees": null,
+          "budget": 1000,
+          "status": "cancelled",
+          "lastStatusUpdate": "2025-07-15T20:53:46.710Z",
+          "id": "1",
+          "cancelledAt": "2025-07-15T20:55:06.402Z",
+          "lastModified": "2025-07-15T20:55:06.402Z"
+        },
+        {
+          "title": "q",
+          "description": "q",
+          "categories": [
+            "Education"
+          ],
+          "categoryIds": [
+            3
+          ],
+          "active": true,
+          "startDate": "2025-07-16T06:28:00.000Z",
+          "endDate": "2025-07-16T15:28:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "q",
+          "estimatedAttendees": 900,
+          "actualAttendees": null,
+          "budget": 900,
+          "status": "upcoming",
+          "lastStatusUpdate": "2025-07-15T20:55:02.268Z",
+          "id": "2"
+        },
+        {
+          "title": "check id",
+          "description": "ik",
+          "categories": [
+            "Sports"
+          ],
+          "categoryIds": [
+            5
+          ],
+          "active": false,
+          "startDate": "2025-07-16T20:49:00.000Z",
+          "endDate": "2025-07-17T00:49:00.000Z",
+          "location": {
+            "venue": null,
+            "address": null,
+            "phone": null,
+            "email": null
+          },
+          "organizer": "checkk id",
+          "estimatedAttendees": 100,
+          "actualAttendees": null,
+          "budget": 100,
+          "status": "preparing",
+          "lastStatusUpdate": "2025-07-15T20:53:41.922Z",
+          "id": "3",
+          "deletedAt": "2025-07-15T20:54:29.737Z",
+          "lastModified": "2025-07-15T20:54:29.737Z"
+        }
       ],
-      "categoryIds": [
-        8,
-        2,
-        4
-      ],
-      "active": true,
-      "startDate": "2024-09-10T19:00:00Z",
-      "endDate": "2024-09-10T22:00:00Z",
-      "location": {
-        "venue": "Khách sạn Rex",
-        "address": "141 Nguyễn Huệ, Quận 1, TP.HCM",
-        "phone": "028-3829-2185",
-        "email": "events@rexhotel.com.vn"
-      },
-      "organizer": "Marketing Team",
-      "estimatedAttendees": 200,
-      "actualAttendees": null,
-      "budget": 25000000,
-      "status": "completed",
-      "lastStatusUpdate": "2025-07-12T03:26:01.291Z"
-    },
-    {
-      "id": "4",
-      "title": "Annual Sports Day 2024",
-      "description": "Ngày hội thể thao thường niên dành cho nhân viên và gia đình",
-      "categories": [
-        "Sports",
-        "Internal",
-        "Entertainment",
-        "Health"
-      ],
-      "categoryIds": [
-        5,
-        7,
-        4,
-        6
-      ],
-      "active": true,
-      "startDate": "2024-09-25T07:00:00Z",
-      "endDate": "2024-09-25T17:00:00Z",
-      "location": {
-        "venue": "Sân vận động Thống Nhất",
-        "address": "138 Đào Duy Từ, Quận 10, TP.HCM",
-        "phone": "028-3862-4397",
-        "email": "booking@thongnhatstadium.vn"
-      },
-      "organizer": "Sports Club",
-      "estimatedAttendees": 300,
-      "actualAttendees": null,
-      "budget": 15000000,
-      "status": "completed",
-      "lastStatusUpdate": "2025-07-12T03:26:01.291Z"
-    },
-    {
-      "id": "5",
-      "title": "Health & Wellness Workshop",
-      "description": "Hội thảo sức khỏe và chăm sóc tinh thần cho nhân viên",
-      "categories": [
-        "Health",
-        "Education",
-        "Training",
-        "Internal"
-      ],
-      "categoryIds": [
-        6,
-        3,
-        9,
-        7
-      ],
-      "active": true,
-      "startDate": "2024-10-05T14:00:00Z",
-      "endDate": "2024-10-05T17:00:00Z",
-      "location": {
-        "venue": "Yoga Studio Serenity",
-        "address": "45 Thảo Điền, Quận 2, TP.HCM",
-        "phone": "028-3744-5566",
-        "email": "booking@serenityyoga.vn"
-      },
-      "organizer": "Wellness Committee",
-      "estimatedAttendees": 80,
-      "actualAttendees": null,
-      "budget": 8000000,
-      "status": "cancelled"
-    },
-    {
-      "id": "6",
-      "title": "Customer Appreciation Dinner",
-      "description": "Tiệc tri ân khách hàng VIP cuối năm",
-      "categories": [
-        "Business",
-        "Marketing",
-        "Entertainment"
-      ],
-      "categoryIds": [
-        2,
-        8,
-        4
-      ],
-      "active": true,
-      "startDate": "2024-11-20T18:30:00Z",
-      "endDate": "2024-11-20T22:00:00Z",
-      "location": {
-        "venue": "InterContinental Saigon",
-        "address": "Corner of Hai Ba Trung & Le Duan, Quận 1, TP.HCM",
-        "phone": "028-3520-9999",
-        "email": "events@intercontinental.com"
-      },
-      "organizer": "Sales Department",
-      "estimatedAttendees": 120,
-      "actualAttendees": null,
-      "budget": 45000000,
-      "status": "cancelled",
-      "lastStatusUpdate": "2025-07-12T03:26:01.291Z",
-      "cancelledAt": "2025-07-12T12:33:12.165Z"
-    },
-    {
-      "id": "7",
-      "title": "done",
-      "description": "done",
-      "categories": [
-        "Technology",
-        "Business"
-      ],
-      "categoryIds": [
-        1,
-        2
-      ],
-      "active": true,
-      "startDate": "2025-07-11T02:48:00.000Z",
-      "endDate": "2025-07-11T02:51:00.000Z",
-      "location": {
-        "venue": null,
-        "address": null,
-        "phone": null,
-        "email": null
-      },
-      "organizer": "a",
-      "estimatedAttendees": 12,
-      "actualAttendees": null,
-      "budget": 12,
-      "status": "completed",
-      "lastStatusUpdate": "2025-07-12T03:26:01.291Z"
-    },
-    {
-      "id": "8",
-      "title": "svd",
-      "description": "svd",
-      "categories": [
-        "Entertainment",
-        "Business"
-      ],
-      "categoryIds": [
-        4,
-        2
-      ],
-      "active": true,
-      "startDate": "2025-07-12T13:00:00.000Z",
-      "endDate": "2025-07-12T14:49:00.000Z",
-      "location": {
-        "venue": "svd",
-        "address": "svd",
-        "phone": "0123456789",
-        "email": "quoc@gmail.com"
-      },
-      "organizer": "quoc",
-      "estimatedAttendees": 200000,
-      "actualAttendees": 500000,
-      "budget": 1000000000,
-      "status": "cancelled",
-      "lastStatusUpdate": "2025-07-12T12:18:55.284Z",
-      "cancelledAt": "2025-07-12T12:26:25.647Z"
-    },
-    {
-      "id": "9",
-      "title": "k",
-      "description": "k",
-      "categories": [
-        "Sports",
-        "Health"
-      ],
-      "categoryIds": [
-        5,
-        6
-      ],
-      "active": true,
-      "startDate": "2025-07-12T11:05:00.000Z",
-      "endDate": "2025-07-12T13:05:00.000Z",
-      "location": {
-        "venue": null,
-        "address": null,
-        "phone": null,
-        "email": null
-      },
-      "organizer": "k",
-      "estimatedAttendees": 1,
-      "actualAttendees": null,
-      "budget": 1,
-      "status": "completed",
-      "lastStatusUpdate": "2025-07-12T13:05:46.031Z"
+      "lastLogin": "2025-07-15T20:48:21.321Z",
+      "isActive": true,
+      "lastLogout": "2025-07-15T19:47:49.831Z"
     }
   ]
 }

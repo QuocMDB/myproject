@@ -70,23 +70,142 @@ const CreateForm = () => {
       .filter(name => name !== '');
   };
 
-  const getNextId = async () => {
+  // ✅ Lấy thông tin user hiện tại từ localStorage - VERSION FIXED
+  const getCurrentUser = () => {
     try {
-      const response = await fetch('http://localhost:9999/events');
-      const events = await response.json();
+      console.log('🔍 [DEBUG] Checking localStorage for user data...');
 
-      if (events.length === 0) return 1;
+      // Debug: In ra tất cả localStorage keys
+      console.log(
+        '📋 [DEBUG] All localStorage keys:',
+        Object.keys(localStorage)
+      );
 
-      const maxId = Math.max(...events.map(event => parseInt(event.id) || 0));
-      const nextId = maxId + 1;
+      // Debug: Kiểm tra từng key có thể có
+      const currentUser = localStorage.getItem('currentUser');
+      const user = localStorage.getItem('user');
+      const currentUserId = localStorage.getItem('currentUserId');
+      const authToken = localStorage.getItem('authToken');
 
-      localStorage.setItem('lastEventId', nextId.toString());
-      return nextId;
+      console.log('🔍 [DEBUG] currentUser:', currentUser);
+      console.log('🔍 [DEBUG] user:', user);
+      console.log('🔍 [DEBUG] currentUserId:', currentUserId);
+      console.log('🔍 [DEBUG] authToken:', authToken);
+
+      // Thử parse currentUser trước
+      if (currentUser) {
+        console.log('✅ [DEBUG] Found currentUser, parsing...');
+        const parsed = JSON.parse(currentUser);
+        console.log('✅ [DEBUG] Parsed currentUser:', parsed);
+
+        // ✅ ENSURE ID EXISTS
+        if (!parsed.id && currentUserId) {
+          parsed.id = currentUserId;
+        }
+
+        return parsed;
+      }
+
+      // Thử parse user
+      if (user) {
+        console.log('✅ [DEBUG] Found user, parsing...');
+        const parsed = JSON.parse(user);
+        console.log('✅ [DEBUG] Parsed user:', parsed);
+
+        // ✅ ENSURE ID EXISTS
+        if (!parsed.id && currentUserId) {
+          parsed.id = currentUserId;
+        }
+
+        return parsed;
+      }
+
+      // Nếu có currentUserId nhưng không có currentUser, tạo object tạm
+      if (currentUserId) {
+        console.log(
+          '⚠️ [DEBUG] Only found currentUserId, creating temp user object'
+        );
+        return {
+          id: currentUserId,
+          username: `user_${currentUserId}`, // fallback username
+        };
+      }
+
+      console.log('❌ [DEBUG] No user data found in localStorage');
+      return null;
     } catch (error) {
-      const lastId = localStorage.getItem('lastEventId');
+      console.error('❌ [DEBUG] Error getting current user:', error);
+      return null;
+    }
+  };
+
+  const getNextId = async currentUserAccount => {
+    try {
+      console.log(
+        '🔍 [getNextId] Getting next ID for account:',
+        currentUserAccount?.username || currentUserAccount?.id
+      );
+
+      // ✅ VALIDATE INPUT
+      if (!currentUserAccount) {
+        throw new Error('currentUserAccount is null or undefined');
+      }
+
+      if (!currentUserAccount.id) {
+        throw new Error('currentUserAccount.id is missing');
+      }
+
+      // ✅ CHỈ LẤY ID TỪ EVENTS TRONG ACCOUNT HIỆN TẠI
+      let maxId = 0;
+
+      if (
+        currentUserAccount.events &&
+        Array.isArray(currentUserAccount.events) &&
+        currentUserAccount.events.length > 0
+      ) {
+        currentUserAccount.events.forEach(event => {
+          const eventId = parseInt(event.id) || 0;
+          if (eventId > maxId) {
+            maxId = eventId;
+          }
+        });
+        console.log(
+          `📊 [getNextId] Max ID in account "${currentUserAccount.username}": ${maxId}`
+        );
+      } else {
+        console.log(
+          `📊 [getNextId] No events found in account "${currentUserAccount.username}"`
+        );
+      }
+
+      const nextId = maxId + 1;
+      console.log(
+        `✅ [getNextId] Next ID for account "${currentUserAccount.username}": ${nextId}`
+      );
+
+      // ✅ LƯU THEO ACCOUNT (OPTIONAL - để track riêng cho mỗi account)
+      localStorage.setItem(
+        `lastEventId_${currentUserAccount.id}`,
+        nextId.toString()
+      );
+
+      return nextId.toString();
+    } catch (error) {
+      console.error('❌ [getNextId] Error:', error);
+
+      // ✅ FALLBACK: LẤY TỪ LOCALSTORAGE THEO ACCOUNT
+      const accountId = currentUserAccount?.id || 'unknown';
+      const lastId = localStorage.getItem(`lastEventId_${accountId}`);
       const nextId = lastId ? parseInt(lastId) + 1 : 1;
-      localStorage.setItem('lastEventId', nextId.toString());
-      return nextId;
+
+      console.log(
+        `🔄 [getNextId] Fallback ID for account "${
+          currentUserAccount?.username || accountId
+        }": ${nextId}`
+      );
+      localStorage.setItem(`lastEventId_${accountId}`, nextId.toString());
+
+      return nextId.toString();
     }
   };
 
@@ -121,33 +240,129 @@ const CreateForm = () => {
       actualAttendees: null,
       budget: parseInt(formData.budget) || 0,
       status: 'preparing',
+      lastStatusUpdate: new Date().toISOString(),
     };
   };
 
-  // API Functions
   const submitToBackend = async eventData => {
     try {
-      const nextId = await getNextId();
+      // 1. Lấy thông tin user hiện tại
+      const currentUser = getCurrentUser();
+      if (!currentUser) {
+        throw new Error('Vui lòng đăng nhập để tạo sự kiện');
+      }
+
+      console.log('🔍 Current user:', currentUser);
+      console.log('🔍 Current user ID:', currentUser.id);
+      console.log('🔍 Current user username:', currentUser.username);
+
+      // ✅ VALIDATE USER DATA
+      if (!currentUser.id && !currentUser.username) {
+        throw new Error('Thông tin user không hợp lệ');
+      }
+
+      // 2. Lấy thông tin account từ database
+      const accountsResponse = await fetch('http://localhost:9999/accounts');
+      if (!accountsResponse.ok) {
+        throw new Error('Không thể kết nối đến server');
+      }
+
+      const accounts = await accountsResponse.json();
+      console.log(
+        '📋 All accounts:',
+        accounts.map(acc => ({ id: acc.id, username: acc.username }))
+      );
+
+      // 3. ✅ TÌM ACCOUNT - IMPROVED LOGIC
+      let userAccount = null;
+
+      // Thử tìm theo username trước
+      if (currentUser.username) {
+        userAccount = accounts.find(
+          acc => acc.username === currentUser.username
+        );
+        console.log(
+          `🔍 Search by username "${currentUser.username}":`,
+          userAccount ? 'Found' : 'Not found'
+        );
+      }
+
+      // Nếu không tìm thấy, thử tìm theo id
+      if (!userAccount && currentUser.id) {
+        userAccount = accounts.find(
+          acc =>
+            acc.id === currentUser.id.toString() || acc.id === currentUser.id
+        );
+        console.log(
+          `🔍 Search by ID "${currentUser.id}":`,
+          userAccount ? 'Found' : 'Not found'
+        );
+      }
+
+      if (!userAccount) {
+        console.error('❌ User account not found');
+        console.error('Current user:', currentUser);
+        console.error(
+          'Available accounts:',
+          accounts.map(acc => ({ id: acc.id, username: acc.username }))
+        );
+
+        throw new Error(
+          `Không tìm thấy tài khoản của user: ${
+            currentUser.username || currentUser.id
+          }`
+        );
+      }
+
+      console.log('✅ Found user account:', {
+        id: userAccount.id,
+        username: userAccount.username,
+        eventsCount: userAccount.events?.length || 0,
+      });
+
+      // 4. ✅ TạO ID mới CHỈ DỰA TRÊN ACCOUNT HIỆN TẠI
+      const nextId = await getNextId(userAccount);
       const eventWithId = { ...eventData, id: nextId };
 
-      const response = await fetch('http://localhost:9999/events', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(eventWithId),
-      });
+      console.log(
+        `🆔 [Create] New event ID: ${nextId} for account: ${userAccount.username}`
+      );
+
+      // 5. Thêm event vào danh sách events của account
+      const updatedAccount = {
+        ...userAccount,
+        events: [...(userAccount.events || []), eventWithId],
+      };
+
+      // 6. Cập nhật account
+      const response = await fetch(
+        `http://localhost:9999/accounts/${userAccount.id}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updatedAccount),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
+      console.log(
+        `✅ Event created successfully for user: ${userAccount.username} with ID: ${nextId}`
+      );
+
       return {
         success: true,
-        id: result.id,
+        id: eventWithId.id,
         message: 'Event created successfully',
-        data: result,
+        data: eventWithId,
       };
     } catch (error) {
+      console.error('❌ Error creating event:', error);
+      console.error('❌ Error stack:', error.stack);
+
       if (error.message.includes('Failed to fetch')) {
         throw new Error('Không thể kết nối đến JSON Server!');
       } else {
@@ -156,14 +371,14 @@ const CreateForm = () => {
     }
   };
 
-  // Validation
+  // Validation functions
   const hasCategoryConflict = () => {
     return (
       formData.primaryCategory &&
       formData.additionalCategories.includes(formData.primaryCategory)
     );
   };
-  // Thêm vào đầu component, sau các hàm utility khác
+
   const validatePhone = phone => {
     if (!phone) return true;
     const digits = phone.replace(/\D/g, '');
@@ -224,7 +439,6 @@ const CreateForm = () => {
         'Danh mục bổ sung không được trùng với danh mục chính';
     }
 
-    //validation cho phone và email
     if (formData.location.phone && !validatePhone(formData.location.phone)) {
       newErrors.phone =
         'Số điện thoại không hợp lệ (phải có 9-11 số và bắt đầu bằng 0)';
@@ -233,6 +447,7 @@ const CreateForm = () => {
     if (formData.location.email && !validateEmail(formData.location.email)) {
       newErrors.email = 'Địa chỉ email không hợp lệ';
     }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -279,15 +494,42 @@ const CreateForm = () => {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    console.log('🚀 [DEBUG] Form submission started');
+
     setShowErrors(true);
     setSubmitSuccess(false);
 
+    // ✅ Kiểm tra đăng nhập trước khi tạo event - VERSION DEBUG
+    console.log('🔍 [DEBUG] Checking authentication...');
+    const currentUser = getCurrentUser();
+
+    console.log('👤 [DEBUG] Current user result:', currentUser);
+    console.log('👤 [DEBUG] Current user type:', typeof currentUser);
+    console.log('👤 [DEBUG] Is user null?', currentUser === null);
+    console.log('👤 [DEBUG] Is user undefined?', currentUser === undefined);
+    console.log('👤 [DEBUG] Boolean check:', !!currentUser);
+
+    if (!currentUser) {
+      console.log('❌ [DEBUG] No user found, redirecting to login');
+      alert('Vui lòng đăng nhập để tạo sự kiện');
+      navigate('/login');
+      return;
+    }
+
+    console.log(
+      '✅ [DEBUG] User authenticated, proceeding with form validation'
+    );
+
     if (validateForm()) {
+      console.log('✅ [DEBUG] Form validation passed');
       setIsSubmitting(true);
 
       try {
         const backendData = prepareDataForBackend();
+        console.log('📦 [DEBUG] Prepared backend data:', backendData);
+
         const result = await submitToBackend(backendData);
+        console.log('✅ [DEBUG] Submit result:', result);
 
         if (result.success) {
           setSubmitSuccess(true);
@@ -298,17 +540,19 @@ const CreateForm = () => {
           }, 500);
         }
       } catch (error) {
+        console.error('❌ [DEBUG] Submit error:', error);
         alert(error.message);
       } finally {
         setIsSubmitting(false);
       }
+    } else {
+      console.log('❌ [DEBUG] Form validation failed');
     }
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       {/* Header */}
-
       <div className="mb-6">
         <button
           onClick={() => navigate(`/`)}
@@ -578,7 +822,6 @@ const CreateForm = () => {
               />
             </div>
 
-            {/* Input số điện thoại */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Số điện thoại
@@ -601,7 +844,6 @@ const CreateForm = () => {
               )}
             </div>
 
-            {/* Input email */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email
@@ -725,7 +967,7 @@ const CreateForm = () => {
             {isSubmitting ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                <span>Đang tạo...</span>
+                <span>Đang tạo...</span>{' '}
               </>
             ) : (
               <>
