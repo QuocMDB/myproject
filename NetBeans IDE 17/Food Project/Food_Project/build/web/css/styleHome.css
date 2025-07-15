@@ -1,0 +1,357 @@
+body {
+    /*no-repeat center center fixed*/
+    background-image: url(../images/Backgrounp.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+.nopadding {
+    padding: 0px;
+}
+
+
+/* thanh điều hương, và đăng nhập */
+
+
+
+.list-option {
+    /* position: fixed; */
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 90%;
+
+}
+
+
+.list-option .logo {
+    text-align: center;
+    margin-top: 30px;
+    margin-left: 50px;
+    margin-bottom: 30px;
+}
+
+.list-option .logo img {
+    width: 80%;
+    height: auto;
+}
+
+
+.list-option-middle{
+    display: grid;
+    grid-template-columns: auto auto;
+
+}
+
+.list-option-middle-left img{
+    width: 55%;
+    margin-bottom: 0px;
+}
+
+.list-option-middle-left a {
+    text-align: center;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.list-option-middle-left a:hover {
+    background-color: #0062cc;
+    transform: scale(1.1);
+    text-decoration: none;
+}
+
+
+
+.list-option-middle-left{
+    text-align: center;
+}
+
+.list-option-element {
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    margin: 10px 10px 10px 10px;
+    text-align: center;
+    width: 100%;
+
+}
+
+.list-option-element a {
+
+    display: block;
+    text-decoration: none;
+    text-align: center;
+    padding: 10px 30px;
+    color: aliceblue;
+    font-size: 18px;
+    font-weight: 5px;
+    border: 3px solid rgb(157, 153, 153);
+
+}
+
+.list-option-element :hover {
+    /* border-bottom: 2px solid aqua; */
+    box-shadow: 0 0 20px #ff5200;
+}
+
+.list-option-element  a:hover{
+    /* color: #007bff; */
+    color: #ff5200;
+}
+
+
+/* best seller  */
+.bestseller img {
+    width: 50%;
+    height: auto;
+    float: left;
+}
+
+.bestseller {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 3px solid rgb(157, 153, 153);
+    border-radius: 3px;
+    float: left;
+    height: auto;
+    width: 100%;
+    padding-right: 10px;
+    margin-left: 40px;
+
+}
+
+.bestseller p {
+    color: white;
+    font-size: 15px;
+    padding-left: 60%;
+    padding-top: 20px;
+
+}
+
+.bestseller h3 {
+    color: white;
+    font-size: 15px;
+    color: aqua;
+    padding: 0px 10px;
+    padding-left: 60%;
+    margin: 0px;
+}
+
+.bestseller input[type="submit"] {
+    text-align: center;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+
+    /* Căn giữa cho nút */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -20px;
+    transform: scale(1);
+    transition: transform 0.3s;
+}
+
+.bestseller input[type="submit"]:hover {
+    background-color: #0062cc;
+    transform: scale(1.1);
+}
+
+/* menu */
+form-table {
+    display: flex;
+    justify-content: center;
+}
+
+.favorite {
+    margin-top: 80px;
+}
+
+#list-option li input {
+    font-size: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    letter-spacing: 2px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.8);
+    text-align: center;
+    border: none;
+    color: white;
+    border: 3px solid rgb(157, 153, 153);
+
+}
+
+#list-option {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    width: 500px;
+    gap: 10px;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto;
+}
+
+#list-option li input:hover {
+    color: #ff5200;
+    box-shadow: 0 0 20px #ff5200;
+}
+
+.list-option-search{
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 40px;
+
+}
+
+.list-option-search button{
+    padding: 5px 5px;
+    background-color: #ff5200;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+}
+
+
+
+
+/* menu-content */
+.favorite-item-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 5px 5px 0px 0px;
+}
+
+.favorite-item-father {
+    display: flex;
+    justify-content: center;
+}
+
+
+.favorite-item {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 3px solid rgb(157, 153, 153);
+    border-radius: 5px;
+    /* display: flex; */
+    width: 205px;
+    flex-direction: column;
+    margin: 20px 0px;
+}
+
+.favorite-item p {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* giới hạn độ hiển thị */
+    color: white;
+    font-size: 15px;
+    padding: 10px 10px;
+    padding-left: 20px;
+    padding-top: 20px;
+}
+
+.favorite-item h3 {
+    color: white;
+    font-size: 15px;
+    color: aqua;
+    padding: 0px 10px;
+    padding-left: 20px;
+    margin: 0px;
+    padding-bottom: 30%;
+}
+
+.favorite-item input {
+    display: inline;
+}
+
+/* csss button */
+.favorite-item {
+
+    position: relative;
+}
+
+.favorite-item input[type="submit"] {
+    text-align: center;
+    padding: 10px 15px;
+    background-color: #ff5200;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+
+    /* Căn giữa cho nút */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -20px;
+    transform: scale(1);
+    transition: transform 0.3s;
+}
+
+.favorite-item input[type="submit"]:hover {
+    background-color: #ff5200;
+    transform: scale(1.1);
+}
+
+
+/* foooter */
+.footer {
+    background-color: #de770ded;
+    color: white;
+    text-align: center;
+    padding: 20px 0px;
+}
+
+.footer p {
+    font-size: 17px; /* Tăng kích thước chữ cho các đoạn văn */
+    margin: 5px 0; /* Giảm khoảng cách giữa các đoạn văn */
+}
+
+.footer h5 {
+    font-size: 17px; /* Tăng kích thước chữ cho tiêu đề h5 */
+    margin-top: 10px; /* Thêm khoảng cách phía trên tiêu đề h5 */
+    font-weight: bold; /* Làm đậm chữ */
+}
+
+.footer p.email {
+    font-size: 17px; /* Tăng kích thước chữ cho email */
+    color: #333; /* Đổi màu chữ nếu cần */
+}
+
+.footer p.address {
+    font-size: 17px; /* Tăng kích thước chữ cho địa chỉ */
+    color: #333; /* Đổi màu chữ nếu cần */
+}
+
+
+.home-button-footer{
+
+    margin-top: 30px;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px 4px 0px 0px;
+    transition: background-color 0.3s;
+}
+
+.home-button-footer:hover {
+    background-color: #888;
+    color: #fff;
+    text-decoration: none;
+}

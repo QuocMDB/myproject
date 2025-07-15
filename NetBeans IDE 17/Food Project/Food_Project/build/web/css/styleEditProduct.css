@@ -1,0 +1,121 @@
+body {
+    background-image: url(../images/Backgrounp.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+
+.bestseller img {
+    height: 510px;
+    width: auto;
+    float: left;
+}
+
+.bestseller {
+    display: grid;
+    grid-template-columns: auto auto;
+    column-gap: 10px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 3px solid rgb(157, 153, 153);
+    border-radius: 5px;
+
+    height: auto;
+    width: 70%;
+    padding-right: 10px;
+    margin-left: 10%;
+    margin-top: 7%;
+    position: relative;
+
+}
+
+.bestseller-footer input:first-child{
+    margin-top: 50px;
+}
+
+.bestseller-footer input{
+    margin-bottom: 30px;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.bestseller-footer p{
+    color: white;
+    font-size: 20px;
+}
+
+
+.bestseller-footer p{
+    color: white;
+    font-size: 20px;
+}
+
+.bestseller-footer-btn{
+    text-align: center;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transform: scale(1);
+    transition: transform 0.3s;
+
+}
+
+.bestseller-footer-btn:hover {
+    background-color: #0062cc;
+    transform: scale(1.1);
+}
+
+/*.bestseller-footer-btn-1{
+    text-align: center;
+    padding: 10px 15px;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    transform: scale(1);
+    transition: transform 0.3s;
+
+}
+
+.bestseller-footer-btn-1:hover {
+    background-color: #bc0047;
+    transform: scale(1.1); 
+  }
+*/
+
+
+.select-cate{
+    padding: 5px 10px;
+    margin-bottom: 20px;
+}
+
+.home-button {
+    position: fixed;
+    top: 0px;
+    left: 10px;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 0px 0px 4px 4px;
+    transition: background-color 0.3s;
+}
+
+.home-button:hover {
+    background-color: #888;
+    color: #fff;
+    text-decoration: none;
+}

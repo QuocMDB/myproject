@@ -1,0 +1,164 @@
+body {
+    background-image: url(../images/backgroundlogin.jpg);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.home-button {
+    position: fixed;
+    top: 0px;
+    left: 10px;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 0px 0px 4px 4px;
+    transition: background-color 0.3s;
+    margin-top: 0px;
+}
+
+.home-button:hover {
+    background-color: #888;
+}
+
+
+.container {
+    margin-top: 100px;
+    padding: 0px;
+    margin-bottom: 40px;
+}
+
+
+
+
+.login-body{
+    display: flex;
+    justify-content: center;
+
+}
+
+
+.container .registration {
+    display: none;
+}
+
+#check:checked~.registration {
+    display: block;
+}
+
+#check:checked~.login {
+    display: none;
+}
+
+#check {
+    display: none;
+}
+
+.container .form {
+    padding: 2rem;
+    background-color: rgba(0, 0, 0, 0.6);
+    margin: 10px 20px;
+
+}
+
+.form header {
+    font-size: 2rem;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: white;
+    /* margin-top: 50px; */
+}
+
+.form input {
+    height: 60px;
+    width: 100%;
+    padding: 0 15px;
+    font-size: 17px;
+    margin-bottom: 1.3rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    outline: none;
+}
+
+.form input:focus {
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.form a {
+    font-size: 16px;
+    color: #009579;
+    text-decoration: none;
+}
+
+.form a:hover {
+    text-decoration: underline;
+}
+
+.form input.button {
+    color: #fff;
+    background: black;
+    font-size: 1.2rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 1.7rem;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.form input.button:hover {
+    background: grey;
+}
+
+.signup {
+    font-size: 17px;
+    text-align: center;
+    color: white;
+}
+
+.signup label {
+    color: white;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.signup label:hover {
+    text-decoration: underline;
+}
+
+.signup-gender {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    color: white;
+}
+.signup-gender label {
+    font-size: 20px;
+    margin-right: 20px;
+    color: white;
+}
+.signup-gender input {
+    margin: 0px 10px;
+    width: 30px;
+}
+
+.footer {
+    margin-top: 50px;
+    background-color: #de770ded;
+    color: white;
+    text-align: center;
+    padding: 20px 0px;
+    margin-top: 30px;
+    float: inline-end;
+
+
+}
+
