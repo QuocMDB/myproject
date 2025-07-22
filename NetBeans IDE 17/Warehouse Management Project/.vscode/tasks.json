@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build and Run Unit Statistics",
+			"type": "shell",
+			"command": "cd /d \"d:\\School\\Project\\Java\\SWP\\ProjectSwp\" && ant clean compile",
+			"group": "build",
+			"isBackground": false
+		}
+	]
+}

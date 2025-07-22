@@ -1,0 +1,13 @@
+/dist/
+/build/
+<<<<<<< HEAD
+"build/" 
+=======
+>>>>>>> dd34a989103fe2dda8847c1d8dd64381ddde5f5d
+"*.class" 
+"build/" 
+"dist/" 
+"*.class" 
+"build/" 
+"dist/" 
+/nbproject/private/
